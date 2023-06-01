@@ -11,7 +11,7 @@
         <tbody>
         <tr v-for="post in posts">
             <td>{{ post.title }}</td>
-            <td>{{ post.post_text }}</td>
+            <td>{{ post.post_text.substring(0, 50) }}</td>
             <td>{{ post.created_at }}</td>
             <td></td>
         </tr>
@@ -29,7 +29,7 @@ export default {
     },
     mounted() {
             axios.get('/api/posts').then(response => {
-                this.posts = response.data;
+                this.posts = response.data.data;
             })
     }
 }
