@@ -5,26 +5,14 @@
             <th>Title</th>
             <th>Post text</th>
             <th>Created date</th>
-            <th>Actions </th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Something 1</td>
-            <td>Longer text</td>
-            <td>2023-06-01</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Something 2</td>
-            <td>Longer text</td>
-            <td>2023-06-01</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Something 3</td>
-            <td>Longer text</td>
-            <td>2023-06-01</td>
+        <tr v-for="post in posts">
+            <td>{{ post.title }}</td>
+            <td>{{ post.post_text }}</td>
+            <td>{{ post.created_at }}</td>
             <td></td>
         </tr>
         </tbody>
@@ -33,5 +21,16 @@
 
 
 <script>
-
+export default {
+    data() {
+        return {
+            posts: []
+        }
+    },
+    mounted() {
+            axios.get('/api/posts').then(response => {
+                this.posts = response.data;
+            })
+    }
+}
 </script>
