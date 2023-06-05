@@ -15,11 +15,13 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <router-link active-class="active-menu" :to="{ name: 'posts.index' }"
+                            <router-link active-class="active-menu"
+                                         exact :to="{ name: 'posts.index' }"
                                          class="nav-link">Posts list</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link active-class="active-menu" :to="{ name: 'posts.create' }"
+                            <router-link active-class="active-menu"
+                                         exact :to="{ name: 'posts.create' }"
                                          class="nav-link">Add new post</router-link>
                         </li>
                     </ul>

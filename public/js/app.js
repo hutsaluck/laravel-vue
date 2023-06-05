@@ -2001,6 +2001,7 @@ var render = function render() {
     staticClass: "nav-link",
     attrs: {
       "active-class": "active-menu",
+      exact: "",
       to: {
         name: "posts.index"
       }
@@ -2011,6 +2012,7 @@ var render = function render() {
     staticClass: "nav-link",
     attrs: {
       "active-class": "active-menu",
+      exact: "",
       to: {
         name: "posts.create"
       }
