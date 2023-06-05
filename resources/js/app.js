@@ -14,11 +14,13 @@ const router = new VueRouter({
     routes: [
         {
             path: '/',
-            component: PostsIndex
+            component: PostsIndex,
+            name: 'posts.index'
         },
         {
-            path: '/posts/create',
-            component: PostsCreate
+            path: '/create',
+            component: PostsCreate,
+            name: 'posts.create'
         },
     ]
 })
