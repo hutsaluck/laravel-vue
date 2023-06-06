@@ -2060,6 +2060,30 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/posts?page=".concat(page, "\n                &category_id=").concat(this.category_id, "\n                &sort_field=").concat(this.sort_field, "\n                &sort_direction=").concat(this.sort_direction, "\n                ")).then(function (response) {
         _this2.posts = response.data;
       });
+    },
+    delete_post: function delete_post(post_id) {
+      var _this3 = this;
+      this.$swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: "Yes, delete it!"
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]("/api/posts/".concat(post_id)).then(function (response) {
+            _this3.$swal("Post deleted successfully");
+            _this3.getResults();
+          })["catch"](function (error) {
+            _this3.$swal({
+              icon: "error",
+              title: "Error happened"
+            });
+          });
+        }
+      });
     }
   }
 });
@@ -2455,6 +2479,7 @@ var render = function render() {
     }
   }, [_vm._v("Created Date")]), _vm._v(" "), this.sort_field == "created_at" && this.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.sort_field == "created_at" && this.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.posts.data, function (post) {
     return _c("tr", [_c("td", [_vm._v(_vm._s(post.title))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.post_text.substring(0, 50)))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.created_at))]), _vm._v(" "), _c("td", [_c("router-link", {
+      staticClass: "btn btn-info btn-sm",
       attrs: {
         to: {
           name: "posts.edit",
@@ -2463,7 +2488,14 @@ var render = function render() {
           }
         }
       }
-    }, [_vm._v("Edit")])], 1)]);
+    }, [_vm._v("\n                    Edit\n                ")]), _vm._v(" "), _c("button", {
+      staticClass: "btn btn-danger btn-sm",
+      on: {
+        click: function click($event) {
+          return _vm.delete_post(post.id);
+        }
+      }
+    }, [_vm._v("Delete")])], 1)]);
   }), 0)]), _vm._v(" "), _c("pagination", {
     attrs: {
       data: _vm.posts
