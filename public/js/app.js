@@ -1916,7 +1916,8 @@ __webpack_require__.r(__webpack_exports__);
         title: '',
         post_text: '',
         category_id: ''
-      }
+      },
+      errors: {}
     };
   },
   mounted: function mounted() {
@@ -1930,6 +1931,10 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
       axios.post('api/posts', this.fields).then(function (response) {
         _this2.$router.push('/');
+      })["catch"](function (error) {
+        if (error.response.status === 422) {
+          _this2.errors = error.response.data.errors;
+        }
       });
     }
   }
@@ -2111,7 +2116,9 @@ var render = function render() {
         _vm.$set(_vm.fields, "title", $event.target.value);
       }
     }
-  }), _vm._v(" "), _c("br"), _vm._v("\n        Post text:\n        "), _c("br"), _vm._v(" "), _c("textarea", {
+  }), _vm._v(" "), _vm.errors && _vm.errors.title ? _c("div", {
+    staticClass: "alert alert-danger"
+  }, [_vm._v("\n            " + _vm._s(_vm.errors.title[0]) + "\n        ")]) : _vm._e(), _vm._v(" "), _c("br"), _vm._v("\n        Post text:\n        "), _c("br"), _vm._v(" "), _c("textarea", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -2131,7 +2138,9 @@ var render = function render() {
         _vm.$set(_vm.fields, "post_text", $event.target.value);
       }
     }
-  }), _vm._v(" "), _c("br"), _vm._v("\n        Category:\n        "), _c("select", {
+  }), _vm._v(" "), _vm.errors && _vm.errors.post_text ? _c("div", {
+    staticClass: "alert alert-danger"
+  }, [_vm._v("\n            " + _vm._s(_vm.errors.post_text[0]) + "\n        ")]) : _vm._e(), _vm._v(" "), _c("br"), _vm._v("\n        Category:\n        "), _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -2156,7 +2165,9 @@ var render = function render() {
         value: category.id
       }
     }, [_vm._v(_vm._s(category.name))]);
-  }), 0), _vm._v(" "), _c("br"), _vm._v(" "), _c("input", {
+  }), 0), _vm._v(" "), _vm.errors && _vm.errors.category_id ? _c("div", {
+    staticClass: "alert alert-danger"
+  }, [_vm._v("\n            " + _vm._s(_vm.errors.category_id[0]) + "\n        ")]) : _vm._e(), _vm._v(" "), _c("br"), _vm._v(" "), _c("input", {
     staticClass: "btn btn-primary",
     attrs: {
       type: "submit",
