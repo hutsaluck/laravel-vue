@@ -7,36 +7,38 @@
                 {{ category.name }}
             </option>
         </select>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                <a href="#" @click.prevent="change_sort('title')">Title</a>
-                <span v-if="this.sort_field == 'title' && this.sort_direction == 'asc'">&uarr;</span>
-                <span v-if="this.sort_field == 'title' && this.sort_direction == 'desc'">&darr;</span>
-            </th>
-            <th>
-                <a href="#" @click.prevent="change_sort('post_text')">Post text</a>
-                <span v-if="this.sort_field == 'post_text' && this.sort_direction == 'asc'">&uarr;</span>
-                <span v-if="this.sort_field == 'post_text' && this.sort_direction == 'desc'">&darr;</span>
-            </th>
-            <th>
-                <a href="#" @click.prevent="change_sort('created_at')">Created Date</a>
-                <span v-if="this.sort_field == 'created_at' && this.sort_direction == 'asc'">&uarr;</span>
-                <span v-if="this.sort_field == 'created_at' && this.sort_direction == 'desc'">&darr;</span>
-            </th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="post in posts.data">
-            <td>{{ post.title }}</td>
-            <td>{{ post.post_text.substring(0, 50) }}</td>
-            <td>{{ post.created_at }}</td>
-            <td></td>
-        </tr>
-        </tbody>
-    </table>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    <a href="#" @click.prevent="change_sort('title')">Title</a>
+                    <span v-if="this.sort_field == 'title' && this.sort_direction == 'asc'">&uarr;</span>
+                    <span v-if="this.sort_field == 'title' && this.sort_direction == 'desc'">&darr;</span>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="change_sort('post_text')">Post text</a>
+                    <span v-if="this.sort_field == 'post_text' && this.sort_direction == 'asc'">&uarr;</span>
+                    <span v-if="this.sort_field == 'post_text' && this.sort_direction == 'desc'">&darr;</span>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="change_sort('created_at')">Created Date</a>
+                    <span v-if="this.sort_field == 'created_at' && this.sort_direction == 'asc'">&uarr;</span>
+                    <span v-if="this.sort_field == 'created_at' && this.sort_direction == 'desc'">&darr;</span>
+                </th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="post in posts.data">
+                <td>{{ post.title }}</td>
+                <td>{{ post.post_text.substring(0, 50) }}</td>
+                <td>{{ post.created_at }}</td>
+                <td>
+                    <router-link :to="{ name: 'posts.edit', params: { id: post.id } }">Edit</router-link>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <pagination :data="posts" @pagination-change-page="getResults"></pagination>
     </div>
 </template>
@@ -58,24 +60,24 @@ export default {
             .then(response => {
                 this.categories = response.data.data
             })
-            this.getResults()
+        this.getResults()
     },
     watch: {
-        category_id(value){
+        category_id(value) {
             this.getResults()
         }
     },
     methods: {
-        change_sort(field){
-            if(this.sort_field === field){
-                 this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc'
+        change_sort(field) {
+            if (this.sort_field === field) {
+                this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc'
             } else {
                 this.sort_field = field
                 this.sort_direction = 'asc'
             }
             this.getResults()
         },
-        getResults(page = 1){
+        getResults(page = 1) {
             axios.get(`/api/posts?page=${page}
                 &category_id=${this.category_id}
                 &sort_field=${this.sort_field}
