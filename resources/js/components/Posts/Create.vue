@@ -24,7 +24,9 @@
                 {{ errors.category_id[0] }}
             </div>
             <br />
-            <input type="submit" class="btn btn-primary" value="Save post" />
+            <input type="submit" class="btn btn-primary"
+                :value="form_submitting ? 'Saving post...' : 'Save post'"
+                :disabled="form_submitting"/>
         </form>
     </div>
 </template>
@@ -39,7 +41,8 @@ export default {
                 post_text: '',
                 category_id: ''
             },
-            errors: {}
+            errors: {},
+            form_submitting:  false
         }
     },
 
@@ -52,13 +55,16 @@ export default {
 
     methods: {
         submit_form() {
+            this.form_submitting = true
             axios.post('api/posts', this.fields)
                 .then(response => {
-                    this.$router.push('/');
+                    this.$router.push('/')
+                    this.form_submitting = false
                 })
                 .catch(error => {
                     if(error.response.status === 422){
                         this.errors = error.response.data.errors
+                        this.form_submitting = false
                     }
                 });
         }
