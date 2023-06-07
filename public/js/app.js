@@ -2022,42 +2022,67 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       posts: {},
       categories: {},
-      category_id: '',
-      sort_field: 'created_at',
-      sort_direction: 'desc'
+      params: {
+        category_id: '',
+        sort_field: 'created_at',
+        sort_direction: 'desc',
+        title: '',
+        post_text: '',
+        created_at: ''
+      },
+      search: ''
     };
   },
   mounted: function mounted() {
     var _this = this;
-    axios.get("/api/categories").then(function (response) {
+    axios.get('/api/categories').then(function (response) {
       _this.categories = response.data.data;
     });
     this.getResults();
   },
   watch: {
-    category_id: function category_id(value) {
-      this.getResults();
+    params: {
+      handler: function handler() {
+        this.getResults();
+      },
+      deep: true
+    },
+    search: function search(val, old) {
+      if (val.length >= 4 || old.length >= 4) {
+        this.getResults();
+      }
     }
   },
   methods: {
     change_sort: function change_sort(field) {
-      if (this.sort_field === field) {
-        this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
+      if (this.params.sort_field === field) {
+        this.params.sort_direction = this.params.sort_direction === 'asc' ? 'desc' : 'asc';
       } else {
-        this.sort_field = field;
-        this.sort_direction = 'asc';
+        this.params.sort_field = field;
+        this.params.sort_direction = 'asc';
       }
-      this.getResults();
     },
+    // Our method to GET results from a Laravel endpoint
     getResults: function getResults() {
       var _this2 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      axios.get("/api/posts?page=".concat(page, "\n                &category_id=").concat(this.category_id, "\n                &sort_field=").concat(this.sort_field, "\n                &sort_direction=").concat(this.sort_direction, "\n                ")).then(function (response) {
+      axios.get('/api/posts', {
+        params: _objectSpread({
+          page: page,
+          search: this.search.length >= 4 ? this.search : ''
+        }, this.params)
+      }).then(function (response) {
         _this2.posts = response.data;
       });
     },
@@ -2066,20 +2091,20 @@ __webpack_require__.r(__webpack_exports__);
       this.$swal({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
-          axios["delete"]("/api/posts/".concat(post_id)).then(function (response) {
-            _this3.$swal("Post deleted successfully");
+          axios["delete"]('/api/posts/' + post_id).then(function (response) {
+            _this3.$swal('Post deleted successfully');
             _this3.getResults();
           })["catch"](function (error) {
             _this3.$swal({
-              icon: "error",
-              title: "Error happened"
+              icon: 'error',
+              title: 'Error happened'
             });
           });
         }
@@ -2416,12 +2441,14 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("select", {
+  return _c("div", [_c("div", {
+    staticClass: "row justify-content-between pb-4"
+  }, [_c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
-      value: _vm.category_id,
-      expression: "category_id"
+      value: _vm.params.category_id,
+      expression: "params.category_id"
     }],
     staticClass: "form-control col-md-3",
     on: {
@@ -2432,7 +2459,7 @@ var render = function render() {
           var val = "_value" in o ? o._value : o.value;
           return val;
         });
-        _vm.category_id = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
+        _vm.$set(_vm.params, "category_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
       }
     }
   }, [_c("option", {
@@ -2444,8 +2471,29 @@ var render = function render() {
       domProps: {
         value: category.id
       }
-    }, [_vm._v("\n            " + _vm._s(category.name) + "\n        ")]);
-  })], 2), _vm._v(" "), _c("table", {
+    }, [_vm._v("\n                " + _vm._s(category.name) + "\n            ")]);
+  })], 2), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.search,
+      expression: "search"
+    }],
+    staticClass: "form-control col-md-3",
+    attrs: {
+      type: "text",
+      placeholder: "Search (min 4 letters)"
+    },
+    domProps: {
+      value: _vm.search
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.search = $event.target.value;
+      }
+    }
+  })]), _vm._v(" "), _c("table", {
     staticClass: "table"
   }, [_c("thead", [_c("tr", [_c("th", [_c("a", {
     attrs: {
@@ -2457,7 +2505,7 @@ var render = function render() {
         return _vm.change_sort("title");
       }
     }
-  }, [_vm._v("Title")]), _vm._v(" "), this.sort_field == "title" && this.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.sort_field == "title" && this.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_c("a", {
+  }, [_vm._v("Title")]), _vm._v(" "), this.params.sort_field == "title" && this.params.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.params.sort_field == "title" && this.params.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_c("a", {
     attrs: {
       href: "#"
     },
@@ -2467,7 +2515,7 @@ var render = function render() {
         return _vm.change_sort("post_text");
       }
     }
-  }, [_vm._v("Post text")]), _vm._v(" "), this.sort_field == "post_text" && this.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.sort_field == "post_text" && this.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_c("a", {
+  }, [_vm._v("Post Text")]), _vm._v(" "), this.params.sort_field == "post_text" && this.params.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.params.sort_field == "post_text" && this.params.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_c("a", {
     attrs: {
       href: "#"
     },
@@ -2477,7 +2525,67 @@ var render = function render() {
         return _vm.change_sort("created_at");
       }
     }
-  }, [_vm._v("Created Date")]), _vm._v(" "), this.sort_field == "created_at" && this.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.sort_field == "created_at" && this.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_vm._v("Actions")])])]), _vm._v(" "), _c("tbody", _vm._l(_vm.posts.data, function (post) {
+  }, [_vm._v("Created Date")]), _vm._v(" "), this.params.sort_field == "created_at" && this.params.sort_direction == "asc" ? _c("span", [_vm._v("↑")]) : _vm._e(), _vm._v(" "), this.params.sort_field == "created_at" && this.params.sort_direction == "desc" ? _c("span", [_vm._v("↓")]) : _vm._e()]), _vm._v(" "), _c("th", [_vm._v("Actions")])]), _vm._v(" "), _c("tr", [_c("th", [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.params.title,
+      expression: "params.title"
+    }],
+    staticClass: "form-input w-100",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.params.title
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.params, "title", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("th", [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.params.post_text,
+      expression: "params.post_text"
+    }],
+    staticClass: "form-input w-100",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.params.post_text
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.params, "post_text", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("th", [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.params.created_at,
+      expression: "params.created_at"
+    }],
+    staticClass: "form-input w-100",
+    attrs: {
+      type: "text"
+    },
+    domProps: {
+      value: _vm.params.created_at
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.params, "created_at", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("th")])]), _vm._v(" "), _c("tbody", _vm._l(_vm.posts.data, function (post) {
     return _c("tr", [_c("td", [_vm._v(_vm._s(post.title))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.post_text.substring(0, 50)))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.created_at))]), _vm._v(" "), _c("td", [_c("router-link", {
       staticClass: "btn btn-info btn-sm",
       attrs: {
@@ -2488,7 +2596,7 @@ var render = function render() {
           }
         }
       }
-    }, [_vm._v("\n                    Edit\n                ")]), _vm._v(" "), _c("button", {
+    }, [_vm._v("Edit")]), _vm._v(" "), _c("button", {
       staticClass: "btn btn-danger btn-sm",
       on: {
         click: function click($event) {
